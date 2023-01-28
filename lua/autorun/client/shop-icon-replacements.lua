@@ -35,7 +35,7 @@ hook.Add("TTTSettingsTabs", "StigTTTIconsSetting", function(dtabs)
 end)
 
 -- Get a list of all icons in the pack
-local files = file.Find("materials/vgui/ttt/stig-ttt-icons/*.png", "GAME")
+local files = file.Find("materials/vgui/ttt/shop-icon-replacements/Color-Coded Icons/*.png", "GAME")
 local icons = {}
 
 for _, path in ipairs(files) do
@@ -50,7 +50,6 @@ local reusedIcons = {
     ["weapon_vadim_defib"] = "weapon_detective_defib",
     ["weapon_ttt_nrgoldengun"] = "weapon_ttt_powerdeagle",
     ["weapon_ttt_foolsgoldengun"] = "weapon_ttt_powerdeagle",
-    ["weapon_ttt_gimnade"] = "weapon_ttt_rmgrenade",
     ["weapon_ttt_jetpack"] = "weapon_ttt_jetpackspawner",
     ["ttt_weapon_portalgun"] = "weapon_portalgun",
     ["weapon_ttt_prop_disguiser"] = "weapon_ttt_prop_hunt_gun",
@@ -69,9 +68,9 @@ hook.Add("TTTBeginRound", "ShopIconReplacements", function()
         local SWEP = weapons.GetStored(class)
 
         if icons[class] then
-            SWEP.Icon = "vgui/ttt/stig-ttt-icons/" .. class .. ".png"
+            SWEP.Icon = "vgui/ttt/shop-icon-replacements/Color-Coded Icons/" .. class .. ".png"
         elseif reusedIcons[class] then
-            SWEP.Icon = "vgui/ttt/stig-ttt-icons/" .. reusedIcons[class] .. ".png"
+            SWEP.Icon = "vgui/ttt/shop-icon-replacements/Color-Coded Icons/" .. reusedIcons[class] .. ".png"
         end
     end
 
@@ -96,7 +95,7 @@ hook.Add("TTTBeginRound", "ShopIconReplacements", function()
     for roleID, equipmentTable in pairs(EquipmentItems) do
         for _, equ in ipairs(equipmentTable) do
             if passiveIDs[equ.id] then
-                equ.material = "vgui/ttt/stig-ttt-icons/" .. passiveIDs[equ.id] .. ".png"
+                equ.material = "vgui/ttt/shop-icon-replacements/Color-Coded Icons/" .. passiveIDs[equ.id] .. ".png"
             end
         end
     end

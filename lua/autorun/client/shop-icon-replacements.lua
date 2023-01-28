@@ -1,7 +1,7 @@
 if engine.ActiveGamemode() ~= "terrortown" then return end
-CreateClientConVar("ttt_icon_replacement_folder", "Color-Coded Icons", true, false)
+CreateClientConVar("ttt_icon_replacement_folder", "Color-Coded Buy Menu Icons", true, false)
 
-local folders = {"Color-Coded Icons", "Simplified Icons"}
+local folders = {"Color-Coded Buy Menu Icons", "Simplified Buy Menu Icons"}
 
 -- Adding a dropdown menu to the settings tab to switch between icon sets
 hook.Add("TTTSettingsTabs", "StigTTTIconsSetting", function(dtabs)
@@ -24,7 +24,7 @@ hook.Add("TTTSettingsTabs", "StigTTTIconsSetting", function(dtabs)
     -- From here we've finally gotten low enough into the panel hierarchy to add our own dropdown menu 
     local dropdown = vgui.Create("DComboBox", interfaceSettings)
     dropdown:SetConVar("ttt_icon_replacement_folder")
-    dropdown:AddChoice("Default Icons", "Default Icons")
+    dropdown:AddChoice("Default Buy Menu Icons", "Default Buy Menu Icons")
 
     for _, folder in pairs(folders) do
         dropdown:AddChoice(folder, folder)
@@ -35,12 +35,12 @@ hook.Add("TTTSettingsTabs", "StigTTTIconsSetting", function(dtabs)
     end
 
     dropdown.Think = dropdown.ConVarStringThink
-    interfaceSettings:Help("Select buy menu icon set:")
+    interfaceSettings:Help("Buy Menu Icons:")
     interfaceSettings:AddItem(dropdown)
 end)
 
 -- Get a list of all icons in the pack
-local files = file.Find("materials/vgui/ttt/shop-icon-replacements/Color-Coded Icons/*.png", "GAME")
+local files = file.Find("materials/vgui/ttt/shop-icon-replacements/Color-Coded Buy Menu Icons/*.png", "GAME")
 local icons = {}
 
 for _, path in ipairs(files) do
@@ -73,9 +73,9 @@ hook.Add("TTTBeginRound", "ShopIconReplacements", function()
         local SWEP = weapons.GetStored(class)
 
         if icons[class] then
-            SWEP.Icon = "vgui/ttt/shop-icon-replacements/Color-Coded Icons/" .. class .. ".png"
+            SWEP.Icon = "vgui/ttt/shop-icon-replacements/Color-Coded Buy Menu Icons/" .. class .. ".png"
         elseif reusedIcons[class] then
-            SWEP.Icon = "vgui/ttt/shop-icon-replacements/Color-Coded Icons/" .. reusedIcons[class] .. ".png"
+            SWEP.Icon = "vgui/ttt/shop-icon-replacements/Color-Coded Buy Menu Icons/" .. reusedIcons[class] .. ".png"
         end
     end
 
@@ -100,7 +100,7 @@ hook.Add("TTTBeginRound", "ShopIconReplacements", function()
     for roleID, equipmentTable in pairs(EquipmentItems) do
         for _, equ in ipairs(equipmentTable) do
             if passiveIDs[equ.id] then
-                equ.material = "vgui/ttt/shop-icon-replacements/Color-Coded Icons/" .. passiveIDs[equ.id] .. ".png"
+                equ.material = "vgui/ttt/shop-icon-replacements/Color-Coded Buy Menu Icons/" .. passiveIDs[equ.id] .. ".png"
             end
         end
     end

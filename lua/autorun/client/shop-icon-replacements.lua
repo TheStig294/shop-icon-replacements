@@ -28,6 +28,9 @@ local reusedPassiveIcons = {}
 
 -- Adding icons
 hook.Add("TTTBeginRound", "ShopIconReplacements", function()
+    hook.Remove("TTTBeginRound", "ShopIconReplacements")
+    if shopIconsCvar:GetString() == "Default Buy Menu Icons" then return end
+
     -- Active items
     for _, wep in ipairs(weapons.GetList()) do
         local class = wep.ClassName
@@ -65,8 +68,6 @@ hook.Add("TTTBeginRound", "ShopIconReplacements", function()
             end
         end
     end
-
-    hook.Remove("TTTBeginRound", "ShopIconReplacements")
 end)
 
 -- Adding a dropdown menu to the settings tab to switch between icon sets

@@ -47,7 +47,7 @@ hook.Add("TTTBeginRound", "ShopIconReplacements", function()
 
         if icons[class] then
             SWEP.Icon = "vgui/ttt/shop-icon-replacements/" .. shopIconsCvar:GetString() .. "/" .. class .. ".png"
-        elseif reusedIcons[class] then
+        elseif reusedIcons[class] and icons[reusedIcons[class]] then
             SWEP.Icon = "vgui/ttt/shop-icon-replacements/" .. shopIconsCvar:GetString() .. "/" .. reusedIcons[class] .. ".png"
         end
     end

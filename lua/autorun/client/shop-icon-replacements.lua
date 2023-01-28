@@ -1,45 +1,7 @@
 if engine.ActiveGamemode() ~= "terrortown" then return end
-CreateClientConVar("ttt_shop_icon_replacement", "Color-Coded Buy Menu Icons", true, false)
-local _, folders = file.Find("materials/vgui/ttt/shop-icon-replacements/*", "GAME")
-
--- Adding a dropdown menu to the settings tab to switch between icon sets
-hook.Add("TTTSettingsTabs", "ShopIconReplacementSetting", function(dtabs)
-    -- First we have to travel down the panel hierarchy of the F1 menu
-    local tabs = dtabs:GetItems()
-    local settingsList
-
-    for _, tab in ipairs(tabs) do
-        if tab.Name == "Settings" then
-            settingsList = tab.Panel
-            break
-        end
-    end
-
-    local settingsSections = settingsList:GetItems()
-    -- Unfortunately there is no unique identifier to each section
-    -- E.g. interfaceSettings:GetList() doesn't work, even to just get the child panels of the interface settings list
-    -- So we just have to assume interface settings is the first settings section (So this won't work with any mod that heavily edits the F1 settings tab like say, TTT2)
-    local interfaceSettings = settingsSections[1]
-    -- From here we've finally gotten low enough into the panel hierarchy to add our own dropdown menu 
-    local dropdown = vgui.Create("DComboBox", interfaceSettings)
-    dropdown:SetConVar("ttt_shop_icon_replacement")
-    dropdown:AddChoice("Default Buy Menu Icons", "Default Buy Menu Icons")
-
-    for _, folder in pairs(folders) do
-        dropdown:AddChoice(folder, folder)
-    end
-
-    dropdown.OnSelect = function(idx, val, data)
-        RunConsoleCommand("ttt_shop_icon_replacement", data)
-    end
-
-    dropdown.Think = dropdown.ConVarStringThink
-    interfaceSettings:Help("Buy Menu Icons:")
-    interfaceSettings:AddItem(dropdown)
-end)
-
+local shopIconsCvar = CreateClientConVar("ttt_shop_icon_replacement", "Color-Coded Buy Menu Icons", true, false, "The icon replacement pack used for the buy menu")
 -- Get a list of all icons in the pack
-local files = file.Find("materials/vgui/ttt/shop-icon-replacements/Color-Coded Buy Menu Icons/*.png", "GAME")
+local files = file.Find("materials/vgui/ttt/shop-icon-replacements/" .. shopIconsCvar:GetString() .. "/*.png", "GAME")
 local icons = {}
 
 for _, path in ipairs(files) do
@@ -72,9 +34,9 @@ hook.Add("TTTBeginRound", "ShopIconReplacements", function()
         local SWEP = weapons.GetStored(class)
 
         if icons[class] then
-            SWEP.Icon = "vgui/ttt/shop-icon-replacements/Color-Coded Buy Menu Icons/" .. class .. ".png"
+            SWEP.Icon = "vgui/ttt/shop-icon-replacements/" .. shopIconsCvar:GetString() .. "/" .. class .. ".png"
         elseif reusedIcons[class] then
-            SWEP.Icon = "vgui/ttt/shop-icon-replacements/Color-Coded Buy Menu Icons/" .. reusedIcons[class] .. ".png"
+            SWEP.Icon = "vgui/ttt/shop-icon-replacements/" .. shopIconsCvar:GetString() .. "/" .. reusedIcons[class] .. ".png"
         end
     end
 
@@ -99,10 +61,54 @@ hook.Add("TTTBeginRound", "ShopIconReplacements", function()
     for roleID, equipmentTable in pairs(EquipmentItems) do
         for _, equ in ipairs(equipmentTable) do
             if passiveIDs[equ.id] then
-                equ.material = "vgui/ttt/shop-icon-replacements/Color-Coded Buy Menu Icons/" .. passiveIDs[equ.id] .. ".png"
+                equ.material = "vgui/ttt/shop-icon-replacements/" .. shopIconsCvar:GetString() .. "/" .. passiveIDs[equ.id] .. ".png"
             end
         end
     end
 
     hook.Remove("TTTBeginRound", "ShopIconReplacements")
+end)
+
+-- Adding a dropdown menu to the settings tab to switch between icon sets
+local _, folders = file.Find("materials/vgui/ttt/shop-icon-replacements/*", "GAME")
+local shownMessage = false
+
+hook.Add("TTTSettingsTabs", "ShopIconReplacementSetting", function(dtabs)
+    -- First we have to travel down the panel hierarchy of the F1 menu
+    local tabs = dtabs:GetItems()
+    local settingsList
+
+    for _, tab in ipairs(tabs) do
+        if tab.Name == "Settings" then
+            settingsList = tab.Panel
+            break
+        end
+    end
+
+    local settingsSections = settingsList:GetItems()
+    -- Unfortunately there is no unique identifier to each section
+    -- E.g. interfaceSettings:GetList() doesn't work, even to just get the child panels of the interface settings list
+    -- So we just have to assume interface settings is the first settings section (So this won't work with any mod that heavily edits the F1 settings tab like say, TTT2)
+    local interfaceSettings = settingsSections[1]
+    -- From here we've finally gotten low enough into the panel hierarchy to add our own dropdown menu 
+    local dropdown = vgui.Create("DComboBox", interfaceSettings)
+    dropdown:SetConVar("ttt_shop_icon_replacement")
+    dropdown:AddChoice("Default Buy Menu Icons", "Default Buy Menu Icons")
+
+    for _, folder in pairs(folders) do
+        dropdown:AddChoice(folder, folder)
+    end
+
+    dropdown.OnSelect = function(idx, val, data)
+        RunConsoleCommand("ttt_shop_icon_replacement", data)
+
+        if not shownMessage then
+            chat.AddText(COLOR_GREEN, "Buy menu icons will change next map!")
+            shownMessage = true
+        end
+    end
+
+    dropdown.Think = dropdown.ConVarStringThink
+    interfaceSettings:Help("Buy Menu Icons: (Changes will take effect next map)")
+    interfaceSettings:AddItem(dropdown)
 end)

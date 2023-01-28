@@ -5,18 +5,23 @@ local folders = {"Color-Coded Icons", "Simplified Icons"}
 
 -- Adding a dropdown menu to the settings tab to switch between icon sets
 hook.Add("TTTSettingsTabs", "StigTTTIconsSetting", function(dtabs)
-    local items = dtabs:GetItems()
-    local settingsDPanelList = items[2].Panel
+    -- First we have to travel down the panel hierarchy of the F1 menu
+    local tabs = dtabs:GetItems()
+    local settingsList
 
-    for _, item in ipairs(items) do
-        if item.name == "Settings" then
-            settingsDPanelList = item
+    for _, tab in ipairs(tabs) do
+        if tab.Name == "Settings" then
+            settingsList = tab.Panel
             break
         end
     end
 
-    local settingsItems = settingsDPanelList:GetItems()
-    local interfaceSettings = settingsItems[1]
+    local settingsSections = settingsList:GetItems()
+    -- Unfortunately there is no unique identifier to each section
+    -- E.g. interfaceSettings:GetList() doesn't work, even to just get the child panels of the interface settings list
+    -- So we just have to assume interface settings is the first settings section (So this won't work with any mod that heavily edits the F1 settings tab like say, TTT2)
+    local interfaceSettings = settingsSections[1]
+    -- From here we've finally gotten low enough into the panel hierarchy to add our own dropdown menu 
     local dropdown = vgui.Create("DComboBox", interfaceSettings)
     dropdown:SetConVar("ttt_icon_replacement_folder")
     dropdown:AddChoice("Default Icons", "Default Icons")

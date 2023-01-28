@@ -1,10 +1,9 @@
 if engine.ActiveGamemode() ~= "terrortown" then return end
-CreateClientConVar("ttt_shop_icon_replacement_folder", "Color-Coded Buy Menu Icons", true, false)
-
-local folders = {"Color-Coded Buy Menu Icons", "Simplified Buy Menu Icons"}
+CreateClientConVar("ttt_shop_icon_replacement", "Color-Coded Buy Menu Icons", true, false)
+local _, folders = file.Find("materials/vgui/ttt/shop-icon-replacements/*", "GAME")
 
 -- Adding a dropdown menu to the settings tab to switch between icon sets
-hook.Add("TTTSettingsTabs", "ShopIconReplacementsSetting", function(dtabs)
+hook.Add("TTTSettingsTabs", "ShopIconReplacementSetting", function(dtabs)
     -- First we have to travel down the panel hierarchy of the F1 menu
     local tabs = dtabs:GetItems()
     local settingsList
@@ -23,7 +22,7 @@ hook.Add("TTTSettingsTabs", "ShopIconReplacementsSetting", function(dtabs)
     local interfaceSettings = settingsSections[1]
     -- From here we've finally gotten low enough into the panel hierarchy to add our own dropdown menu 
     local dropdown = vgui.Create("DComboBox", interfaceSettings)
-    dropdown:SetConVar("ttt_shop_icon_replacement_folder")
+    dropdown:SetConVar("ttt_shop_icon_replacement")
     dropdown:AddChoice("Default Buy Menu Icons", "Default Buy Menu Icons")
 
     for _, folder in pairs(folders) do
@@ -31,7 +30,7 @@ hook.Add("TTTSettingsTabs", "ShopIconReplacementsSetting", function(dtabs)
     end
 
     dropdown.OnSelect = function(idx, val, data)
-        RunConsoleCommand("ttt_shop_icon_replacement_folder", data)
+        RunConsoleCommand("ttt_shop_icon_replacement", data)
     end
 
     dropdown.Think = dropdown.ConVarStringThink

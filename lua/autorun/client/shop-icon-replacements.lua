@@ -1,5 +1,5 @@
 if engine.ActiveGamemode() ~= "terrortown" then return end
-local shopIconsCvar = CreateClientConVar("ttt_shop_icon_replacement", "Color-Coded Buy Menu Icons", true, false, "The icon replacement pack used for the buy menu")
+local shopIconsCvar = CreateClientConVar("ttt_shop_icon_replacement", "color-coded buy menu icons", true, false, "The icon replacement pack used for the buy menu")
 -- Get a list of all icons in the pack
 local files = file.Find("materials/vgui/ttt/shop-icon-replacements/" .. shopIconsCvar:GetString() .. "/*.png", "GAME")
 local icons = {}
@@ -29,12 +29,12 @@ local reusedPassiveIcons = {}
 -- Adding icons
 hook.Add("TTTBeginRound", "ShopIconReplacements", function()
     hook.Remove("TTTBeginRound", "ShopIconReplacements")
-    if shopIconsCvar:GetString() == "Default Buy Menu Icons" then return end
+    if shopIconsCvar:GetString() == "default buy menu icons" then return end
 
     -- Turning off the "Custom" icon placed on buy menu icons once if colour coded icons are being used
     -- As they cover the symbol icon this icon set has
     -- As this is only done once on the client, this setting can be turned on again if the user wishes
-    if ConVarExists("ttt_bem_marker_custom") and GetConVar("ttt_bem_marker_custom"):GetBool() and shopIconsCvar:GetString() == "Color-Coded Buy Menu Icons" and not file.Exists("ttt/bem-custom-icon-off.txt", "DATA") then
+    if ConVarExists("ttt_bem_marker_custom") and GetConVar("ttt_bem_marker_custom"):GetBool() and shopIconsCvar:GetString() == "color-coded buy menu icons" and not file.Exists("ttt/bem-custom-icon-off.txt", "DATA") then
         file.CreateDir("ttt")
         file.Write("ttt/bem-custom-icon-off.txt")
         RunConsoleCommand("ttt_bem_marker_custom", "0")
@@ -86,7 +86,7 @@ local shownMessage = false
 local function AddDropdown(parentPanel)
     local dropdown = vgui.Create("DComboBox", parentPanel)
     dropdown:SetConVar("ttt_shop_icon_replacement")
-    dropdown:AddChoice("Default Buy Menu Icons", "Default Buy Menu Icons")
+    dropdown:AddChoice("default buy menu icons", "default buy menu icons")
 
     for _, folder in pairs(folders) do
         dropdown:AddChoice(folder, folder)

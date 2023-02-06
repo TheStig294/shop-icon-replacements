@@ -112,34 +112,36 @@ local function AddDropdown(parentPanel)
     parentPanel:AddItem(dropdown)
 end
 
--- Custom Roles for TTT adds a hook that allows us to add a setting without assuming the layout of the settings tab
-if isfunction(CRVersion) and CRVersion("1.7.3") then
-    hook.Add("TTTSettingsConfigTabFields", "ShopIconReplacementSetting", function(sectionName, parentForm)
-        if sectionName == "Interface" then
-            AddDropdown(parentForm)
-        end
-    end)
-else
-    -- Else if that mod isn't installed we have to do things manually...
-    hook.Add("TTTSettingsTabs", "ShopIconReplacementSetting", function(dtabs)
-        -- First we have to travel down the panel hierarchy of the F1 menu
-        local tabs = dtabs:GetItems()
-        local settingsList
-
-        for _, tab in ipairs(tabs) do
-            if tab.Name == "Settings" then
-                settingsList = tab.Panel
-                break
+hook.Add("Initialize", "ShopIconReplacementSetting", function()
+    -- Custom Roles for TTT adds a hook that allows us to add a setting without assuming the layout of the settings tab
+    if isfunction(CRVersion) and CRVersion("1.7.3") then
+        hook.Add("TTTSettingsConfigTabFields", "ShopIconReplacementSetting", function(sectionName, parentForm)
+            if sectionName == "Interface" then
+                AddDropdown(parentForm)
             end
-        end
+        end)
+    else
+        -- Else if that mod isn't installed we have to do things manually...
+        hook.Add("TTTSettingsTabs", "ShopIconReplacementSetting", function(dtabs)
+            -- First we have to travel down the panel hierarchy of the F1 menu
+            local tabs = dtabs:GetItems()
+            local settingsList
 
-        -- If we failed to find the settings tab, abort adding the dropdown and don't break the F1 menu
-        if not settingsList then return end
-        local settingsSections = settingsList:GetItems()
-        -- Unfortunately there is no unique identifier to each section
-        -- E.g. interfaceSettings:GetList() doesn't work, even to just get the child panels of the interface settings list
-        -- So we just have to assume interface settings is the first settings section (So this won't work with any mod that heavily edits the F1 settings tab like say, TTT2)
-        local interfaceSettings = settingsSections[1]
-        AddDropdown(interfaceSettings)
-    end)
-end
+            for _, tab in ipairs(tabs) do
+                if tab.Name == "Settings" then
+                    settingsList = tab.Panel
+                    break
+                end
+            end
+
+            -- If we failed to find the settings tab, abort adding the dropdown and don't break the F1 menu
+            if not settingsList then return end
+            local settingsSections = settingsList:GetItems()
+            -- Unfortunately there is no unique identifier to each section
+            -- E.g. interfaceSettings:GetList() doesn't work, even to just get the child panels of the interface settings list
+            -- So we just have to assume interface settings is the first settings section (So this won't work with any mod that heavily edits the F1 settings tab like say, TTT2)
+            local interfaceSettings = settingsSections[1]
+            AddDropdown(interfaceSettings)
+        end)
+    end
+end)

@@ -1,7 +1,8 @@
 if engine.ActiveGamemode() ~= "terrortown" then return end
 local shopIconsCvar = CreateClientConVar("ttt_shop_icon_replacement", "color-coded buy menu icons", true, false, "The icon replacement pack used for the buy menu")
+local shopIconSet = shopIconsCvar:GetString()
 -- Get a list of all icons in the pack
-local files = file.Find("materials/vgui/ttt/shop-icon-replacements/" .. shopIconsCvar:GetString() .. "/*.png", "GAME")
+local files = file.Find("materials/vgui/ttt/shop-icon-replacements/" .. shopIconSet .. "/*.png", "GAME")
 local icons = {}
 
 for _, path in ipairs(files) do
@@ -27,14 +28,13 @@ local reusedIcons = {
 local reusedPassiveIcons = {}
 
 -- Adding icons
-hook.Add("TTTBeginRound", "ShopIconReplacements", function()
-    hook.Remove("TTTBeginRound", "ShopIconReplacements")
-    if shopIconsCvar:GetString() == "default buy menu icons" then return end
+local function ApplyIcons()
+    if shopIconSet == "default buy menu icons" then return end
 
     -- Turning off the "Custom" icon placed on buy menu icons once if colour coded icons are being used
     -- As they cover the symbol icon this icon set has
     -- As this is only done once on the client, this setting can be turned on again if the user wishes
-    if ConVarExists("ttt_bem_marker_custom") and GetConVar("ttt_bem_marker_custom"):GetBool() and shopIconsCvar:GetString() == "color-coded buy menu icons" and not file.Exists("ttt/bem-custom-icon-off.txt", "DATA") then
+    if ConVarExists("ttt_bem_marker_custom") and GetConVar("ttt_bem_marker_custom"):GetBool() and shopIconSet == "color-coded buy menu icons" and not file.Exists("ttt/bem-custom-icon-off.txt", "DATA") then
         file.CreateDir("ttt")
         file.Write("ttt/bem-custom-icon-off.txt")
         RunConsoleCommand("ttt_bem_marker_custom", "0")
@@ -46,9 +46,9 @@ hook.Add("TTTBeginRound", "ShopIconReplacements", function()
         local SWEP = weapons.GetStored(class)
 
         if icons[class] then
-            SWEP.Icon = "vgui/ttt/shop-icon-replacements/" .. shopIconsCvar:GetString() .. "/" .. class .. ".png"
+            SWEP.Icon = "vgui/ttt/shop-icon-replacements/" .. shopIconSet .. "/" .. class .. ".png"
         elseif reusedIcons[class] and icons[reusedIcons[class]] then
-            SWEP.Icon = "vgui/ttt/shop-icon-replacements/" .. shopIconsCvar:GetString() .. "/" .. reusedIcons[class] .. ".png"
+            SWEP.Icon = "vgui/ttt/shop-icon-replacements/" .. shopIconSet .. "/" .. reusedIcons[class] .. ".png"
         end
     end
 
@@ -79,10 +79,17 @@ hook.Add("TTTBeginRound", "ShopIconReplacements", function()
     for roleID, equipmentTable in pairs(EquipmentItems) do
         for _, equ in ipairs(equipmentTable) do
             if passiveIDs[equ.id] then
-                equ.material = "vgui/ttt/shop-icon-replacements/" .. shopIconsCvar:GetString() .. "/" .. passiveIDs[equ.id] .. ".png"
+                equ.material = "vgui/ttt/shop-icon-replacements/" .. shopIconSet .. "/" .. passiveIDs[equ.id] .. ".png"
             end
         end
     end
+end
+
+hook.Add("InitPostEntity", "ShopIconReplacements", ApplyIcons)
+
+hook.Add("TTTBeginRound", "ShopIconReplacements", function()
+    ApplyIcons()
+    hook.Remove("TTTBeginRound", "ShopIconReplacements")
 end)
 
 -- Adding a dropdown menu to the settings tab to switch between icon sets

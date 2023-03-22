@@ -22,7 +22,11 @@ local reusedIcons = {
     ["weapon_ttt_prop_disguiser"] = "weapon_ttt_prop_hunt_gun",
     ["weapon_ttt_suicide"] = "weapon_ttt_jihad",
     ["freeze_swep"] = "tfa_wintershowl",
-    ["weapon_ttt_donconnnon"] = "doncmk2_swep"
+    ["weapon_ttt_donconnnon"] = "doncmk2_swep",
+    ["ttt_m9k_harpoon"] = "weapon_ttt_hwapoon",
+    ["zombies_perk_phdflopper"] = "hoff_perk_phd",
+    ["zombies_perk_juggernog"] = "hoff_perk_juggernog",
+    ["zombies_perk_staminup"] = "hoff_perk_staminup"
 }
 
 local reusedPassiveIcons = {}

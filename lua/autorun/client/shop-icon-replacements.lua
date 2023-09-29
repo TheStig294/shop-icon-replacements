@@ -26,7 +26,8 @@ local reusedIcons = {
     ["ttt_m9k_harpoon"] = "weapon_ttt_hwapoon",
     ["zombies_perk_phdflopper"] = "hoff_perk_phd",
     ["zombies_perk_juggernog"] = "hoff_perk_juggernog",
-    ["zombies_perk_staminup"] = "hoff_perk_staminup"
+    ["zombies_perk_staminup"] = "hoff_perk_staminup",
+    ["weapon_qua_bomb_station"] = "weapon_ttt_bomb_station"
 }
 
 local reusedPassiveIcons = {}

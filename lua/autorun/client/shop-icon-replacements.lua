@@ -57,34 +57,48 @@ local function ApplyIcons()
         end
     end
 
-    -- Passive items
-    local passiveIDs = {}
+    if TTT2 then
+        -- TTT2 Passive items
+        for _, item in ipairs(items.GetList()) do
+            local class = item.ClassName
+            local ITEM = items.GetStored(class)
 
-    -- Converting passive item ID strings into their actual ID number
-    for ID, _ in pairs(icons) do
-        -- Steam workshop converts filenames to lowercase so we have to convert them back to all uppercase...
-        ID = string.upper(ID)
-
-        if _G[ID] then
-            passiveIDs[_G[ID]] = ID
+            if icons[class] then
+                ITEM.material = "vgui/ttt/shop-icon-replacements/" .. shopIconSet .. "/" .. class .. ".png"
+            elseif reusedIcons[class] and icons[reusedIcons[class]] then
+                ITEM.material = "vgui/ttt/shop-icon-replacements/" .. shopIconSet .. "/" .. reusedIcons[class] .. ".png"
+            end
         end
-    end
+    else
+        -- Passive items
+        local passiveIDs = {}
 
-    -- Adding re-used icons to the list of passive IDs as well
-    for ID, fileName in pairs(reusedPassiveIcons) do
-        -- Steam workshop converts filenames to lowercase so we have to convert them back to all uppercase...
-        ID = string.upper(ID)
+        -- Converting passive item ID strings into their actual ID number
+        for ID, _ in pairs(icons) do
+            -- Steam workshop converts filenames to lowercase so we have to convert them back to all uppercase...
+            ID = string.upper(ID)
 
-        if _G[ID] then
-            passiveIDs[_G[ID]] = fileName
+            if _G[ID] then
+                passiveIDs[_G[ID]] = ID
+            end
         end
-    end
 
-    -- Applying passive item icons
-    for roleID, equipmentTable in pairs(EquipmentItems) do
-        for _, equ in ipairs(equipmentTable) do
-            if passiveIDs[equ.id] then
-                equ.material = "vgui/ttt/shop-icon-replacements/" .. shopIconSet .. "/" .. passiveIDs[equ.id] .. ".png"
+        -- Adding re-used icons to the list of passive IDs as well
+        for ID, fileName in pairs(reusedPassiveIcons) do
+            -- Steam workshop converts filenames to lowercase so we have to convert them back to all uppercase...
+            ID = string.upper(ID)
+
+            if _G[ID] then
+                passiveIDs[_G[ID]] = fileName
+            end
+        end
+
+        -- Applying passive item icons
+        for roleID, equipmentTable in pairs(EquipmentItems) do
+            for _, equ in ipairs(equipmentTable) do
+                if passiveIDs[equ.id] then
+                    equ.material = "vgui/ttt/shop-icon-replacements/" .. shopIconSet .. "/" .. passiveIDs[equ.id] .. ".png"
+                end
             end
         end
     end

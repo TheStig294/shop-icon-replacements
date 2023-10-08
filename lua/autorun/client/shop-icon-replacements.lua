@@ -107,8 +107,10 @@ end
 hook.Add("InitPostEntity", "ShopIconReplacements", ApplyIcons)
 
 hook.Add("TTTBeginRound", "ShopIconReplacements", function()
-    ApplyIcons()
-    hook.Remove("TTTBeginRound", "ShopIconReplacements")
+    timer.Simple(0, function()
+        ApplyIcons()
+        hook.Remove("TTTBeginRound", "ShopIconReplacements")
+    end)
 end)
 
 -- Adding a dropdown menu to the settings tab to switch between icon sets

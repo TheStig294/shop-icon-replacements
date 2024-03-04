@@ -39,10 +39,7 @@ local function ApplyIcons()
 
     -- Turning off the "Custom" icon placed on buy menu icons once if colour coded icons are being used
     -- As they cover the symbol icon this icon set has
-    -- As this is only done once on the client, this setting can be turned on again if the user wishes
-    if ConVarExists("ttt_bem_marker_custom") and GetConVar("ttt_bem_marker_custom"):GetBool() and shopIconSet == "color-coded buy menu icons" and not file.Exists("ttt/bem-custom-icon-off.txt", "DATA") then
-        file.CreateDir("ttt")
-        file.Write("ttt/bem-custom-icon-off.txt")
+    if ConVarExists("ttt_bem_marker_custom") and GetConVar("ttt_bem_marker_custom"):GetBool() and shopIconSet == "color-coded buy menu icons" then
         RunConsoleCommand("ttt_bem_marker_custom", "0")
     end
 

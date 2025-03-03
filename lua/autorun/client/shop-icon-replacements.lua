@@ -12,7 +12,6 @@ end
 
 -- Manually re-use icons for duplicate items
 local reusedIcons = {
-    ["weapon_ttt_traitor_lightsaber"] = "weapon_ttt_detective_lightsaber",
     ["dancedead"] = "weapon_ttt_dancedead",
     ["weapon_vadim_defib"] = "weapon_detective_defib",
     ["weapon_ttt_nrgoldengun"] = "weapon_ttt_powerdeagle",

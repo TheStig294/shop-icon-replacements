@@ -171,3 +171,17 @@ hook.Add("Initialize", "ShopIconReplacementSetting", function()
         end)
     end
 end)
+
+-- Debug commands to find weapons missing an icon
+local function PrintMissing()
+    for _, SWEP in ipairs(weapons.GetList()) do
+        if not SWEP.CanBuy or not istable(SWEP.CanBuy) or table.IsEmpty(SWEP.CanBuy) then continue end
+        local class = WEPS.GetClass(SWEP)
+
+        if not icons[class] then
+            print(class)
+        end
+    end
+end
+
+concommand.Add("ttt_shop_icon_replacements_print_missing", PrintMissing, nil, "Prints all registered SWEPs missing an icon that appear in the buy menu by default")

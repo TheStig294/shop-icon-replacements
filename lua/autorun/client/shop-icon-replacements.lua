@@ -174,13 +174,20 @@ end)
 
 -- Debug command to find weapons missing an icon
 local function PrintMissing()
+    local nothingPrinted = true
+
     for _, SWEP in ipairs(weapons.GetList()) do
         if not SWEP.CanBuy or not istable(SWEP.CanBuy) or table.IsEmpty(SWEP.CanBuy) then continue end
         local class = WEPS.GetClass(SWEP)
 
-        if not icons[class] and not reusedIcons[class] or not icons[reusedIcons[class]] then
+        if not icons[class] and not (reusedIcons[class] and icons[reusedIcons[class]]) then
             print(class)
+            nothingPrinted = false
         end
+    end
+
+    if nothingPrinted then
+        print("No registered SWEPs missing an icon from the active icon set")
     end
 end
 

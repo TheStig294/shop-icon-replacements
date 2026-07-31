@@ -172,13 +172,13 @@ hook.Add("Initialize", "ShopIconReplacementSetting", function()
     end
 end)
 
--- Debug commands to find weapons missing an icon
+-- Debug command to find weapons missing an icon
 local function PrintMissing()
     for _, SWEP in ipairs(weapons.GetList()) do
         if not SWEP.CanBuy or not istable(SWEP.CanBuy) or table.IsEmpty(SWEP.CanBuy) then continue end
         local class = WEPS.GetClass(SWEP)
 
-        if not icons[class] then
+        if not icons[class] and not reusedIcons[class] or not icons[reusedIcons[class]] then
             print(class)
         end
     end

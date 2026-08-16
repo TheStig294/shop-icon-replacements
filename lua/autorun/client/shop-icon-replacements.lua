@@ -33,6 +33,32 @@ local reusedIcons = {
 
 local reusedPassiveIcons = {}
 
+local function GetPassiveIDs()
+    local passiveIDs = {}
+
+    -- Converting passive item ID strings into their actual ID number
+    for ID, _ in pairs(icons) do
+        -- Steam workshop converts filenames to lowercase so we have to convert them back to all uppercase...
+        ID = string.upper(ID)
+
+        if _G[ID] then
+            passiveIDs[_G[ID]] = ID
+        end
+    end
+
+    -- Adding re-used icons to the list of passive IDs as well
+    for ID, fileName in pairs(reusedPassiveIcons) do
+        -- Steam workshop converts filenames to lowercase so we have to convert them back to all uppercase...
+        ID = string.upper(ID)
+
+        if _G[ID] then
+            passiveIDs[_G[ID]] = fileName
+        end
+    end
+
+    return passiveIDs
+end
+
 -- Adding icons
 local function ApplyIcons()
     if shopIconSet == "default buy menu icons" then return end
@@ -69,33 +95,18 @@ local function ApplyIcons()
         end
     else
         -- Passive items
-        local passiveIDs = {}
-
-        -- Converting passive item ID strings into their actual ID number
-        for ID, _ in pairs(icons) do
-            -- Steam workshop converts filenames to lowercase so we have to convert them back to all uppercase...
-            ID = string.upper(ID)
-
-            if _G[ID] then
-                passiveIDs[_G[ID]] = ID
-            end
-        end
-
-        -- Adding re-used icons to the list of passive IDs as well
-        for ID, fileName in pairs(reusedPassiveIcons) do
-            -- Steam workshop converts filenames to lowercase so we have to convert them back to all uppercase...
-            ID = string.upper(ID)
-
-            if _G[ID] then
-                passiveIDs[_G[ID]] = fileName
-            end
-        end
+        local passiveIDs = GetPassiveIDs()
 
         -- Applying passive item icons
-        for roleID, equipmentTable in pairs(EquipmentItems) do
+        for _, equipmentTable in pairs(EquipmentItems) do
             for _, equ in ipairs(equipmentTable) do
                 if passiveIDs[equ.id] then
                     equ.material = "vgui/ttt/shop-icon-replacements/" .. shopIconSet .. "/" .. passiveIDs[equ.id] .. ".png"
+                end
+
+                -- Special case for the Randoman/Hoodoo fallback icons, reuse the randomat icon if available
+                if (equ.randomanItem or equ.hoodooItem) and icons["weapon_ttt_randomat"] and equ.material == "vgui/ttt/icon_randomat" then
+                    equ.material = "vgui/ttt/shop-icon-replacements/" .. shopIconSet .. "/weapon_ttt_randomat.png"
                 end
             end
         end
@@ -176,6 +187,7 @@ end)
 local function PrintMissing()
     local nothingPrinted = true
 
+    -- SWEPs
     for _, SWEP in ipairs(weapons.GetList()) do
         if not SWEP.CanBuy or not istable(SWEP.CanBuy) or table.IsEmpty(SWEP.CanBuy) then continue end
         local class = WEPS.GetClass(SWEP)
@@ -186,8 +198,30 @@ local function PrintMissing()
         end
     end
 
+    -- Passive items
+    local equipIDToString = {}
+
+    for id, value in pairs(_G) do
+        -- Not all passive items will have a global set starting with "EQUIP_", it's just convention...
+        if not isstring(id) or not isnumber(value) or not string.StartsWith(id, "EQUIP_") then continue end
+        equipIDToString[value] = id
+    end
+
+    local passiveIDs = GetPassiveIDs()
+
+    -- Applying passive item icons
+    for _, equipmentTable in pairs(EquipmentItems) do
+        for _, equ in ipairs(equipmentTable) do
+            -- Don't print out the Randoman/Hoodoo items as they are handled as a special case...
+            if not passiveIDs[equ.id] and not equ.randomanItem and not equ.hoodooItem then
+                print(equ.id, LANG.TryTranslation(equ.name), equipIDToString[equ.id])
+                nothingPrinted = false
+            end
+        end
+    end
+
     if nothingPrinted then
-        print("No registered SWEPs missing an icon from the active icon set")
+        print("No registered SWEPs or passive items missing an icon from the active icon set")
     end
 end
 

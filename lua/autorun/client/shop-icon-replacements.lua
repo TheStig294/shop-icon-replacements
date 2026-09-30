@@ -28,7 +28,8 @@ local reusedIcons = {
     ["zombies_perk_juggernog"] = "hoff_perk_juggernog",
     ["zombies_perk_staminup"] = "hoff_perk_staminup",
     ["weapon_qua_bomb_station"] = "weapon_ttt_bomb_station",
-    ["weapon_ttt_deadringer"] = "weapon_ttt_dead_ringer"
+    ["weapon_ttt_deadringer"] = "weapon_ttt_dead_ringer",
+    ["weapon_controllable_manhack_improved"] = "weapon_controllable_manhack",
 }
 
 local reusedPassiveIcons = {}
